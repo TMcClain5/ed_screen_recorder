@@ -119,8 +119,7 @@ public class SwiftEdScreenRecorderPlugin: NSObject, FlutterPlugin {
     if(recorder.isAvailable){
         NSLog("startRecording: w x h = \(width) x \(height) pixels");
         if dirPathToSave != nil && dirPathToSave != "" {
-            print("DIR: " + dirPathToSave)
-            var filePath:NSString = dirPathToSave as NSString
+            self.filePath = dirPathToSave as NSString
             self.videoOutputURL = URL(fileURLWithPath: String(self.filePath.appendingPathComponent(fileName)))
         } else {
             self.filePath = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString

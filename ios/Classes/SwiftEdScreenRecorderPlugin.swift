@@ -54,17 +54,32 @@ public class SwiftEdScreenRecorderPlugin: NSObject, FlutterPlugin {
         self.isProgress=Bool(true)
         self.eventName=String("startRecordScreen")
         var width = args?["width"]; // in pixels
-        if(width == nil || width is NSNull) {
-            width = Int32(UIScreen.main.nativeBounds.width); // pixels
-        } else {
-            width = Int32(width as! Int32);
-        }
         var height = args?["height"] // in pixels
-        if(height == nil || height is NSNull) {
-            height = Int32(UIScreen.main.nativeBounds.height); // pixels
-        } else {
-            height = Int32(height as! Int32);
+
+        if UIDevice.current.orientation.isLandscape {
+            if(width == nil || width is NSNull) {
+                width = Int32(UIScreen.main.nativeBounds.height); // pixels
+            } else {
+                width = Int32(height as! Int32);
+            }
+            if(height == nil || height is NSNull) {
+                height = Int32(UIScreen.main.nativeBounds.width); // pixels
+            } else {
+                height = Int32(width as! Int32);
+            }
+        }else{
+            if(width == nil || width is NSNull) {
+                width = Int32(UIScreen.main.nativeBounds.width); // pixels
+            } else {
+                width = Int32(width as! Int32);
+            }
+            if(height == nil || height is NSNull) {
+                height = Int32(UIScreen.main.nativeBounds.height); // pixels
+            } else {
+                height = Int32(height as! Int32);
+            }
         }
+
         self.success=Bool(startRecording(width: width as! Int32 ,height: height as! Int32,dirPathToSave:(self.dirPathToSave as NSString) as String));
         self.startDate=Int(NSDate().timeIntervalSince1970 * 1_000)
         myResult = result
@@ -73,7 +88,7 @@ public class SwiftEdScreenRecorderPlugin: NSObject, FlutterPlugin {
         
         if(videoWriter != nil){
             self.success=Bool(stopRecording())
-            self.filePath=NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0] as NSString
+            self.filePath=self.dirPathToSave
             self.isProgress=Bool(false)
             self.eventName=String("stopRecordScreen")
             self.endDate=Int(NSDate().timeIntervalSince1970 * 1_000)
@@ -231,9 +246,9 @@ public class SwiftEdScreenRecorderPlugin: NSObject, FlutterPlugin {
 
             self.videoWriter?.finishWriting {
                 print("Finished writing video");
-                PHPhotoLibrary.shared().performChanges({
-                    PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: self.videoOutputURL!)
-                })
+                //PHPhotoLibrary.shared().performChanges({
+                //    PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: self.videoOutputURL!)
+                //})
                 self.message="stopRecordScreenFromApp"
             }
         }else{

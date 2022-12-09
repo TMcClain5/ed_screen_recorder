@@ -225,6 +225,8 @@ public class SwiftEdScreenRecorderPlugin: NSObject, FlutterPlugin {
 
     @objc func stopRecording() -> Bool {
         var res : Bool = true;
+        var videoFinished : Bool = false;
+        var readyToSendResponse : Bool = false;
         if(recorder.isRecording){
             if #available(iOS 11.0, *) {
                 recorder.stopCapture( handler: { (error) in
@@ -249,12 +251,17 @@ public class SwiftEdScreenRecorderPlugin: NSObject, FlutterPlugin {
                 //PHPhotoLibrary.shared().performChanges({
                 //    PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: self.videoOutputURL!)
                 //})
+                readyToSendResponse = true;
                 self.message="stopRecordScreenFromApp"
             }
         }else{
             self.message="You haven't start the recording unit now!"
         }
-        return Bool(res);
+        while (!videoFinished){
+            if (readyToSendResponse){
+                return Bool(res);
+            }
+        }
 
 }
 }
